@@ -13,7 +13,7 @@ const dbName = process.env.DB_USER_NAME;
 const dbPassword = process.env.DB_PASSWORD;
 
 const uri = `mongodb+srv://${dbName}:${dbPassword}@userdatabase.06ovt0z.mongodb.net/?retryWrites=true&w=majority&appName=userDatabase`;
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
