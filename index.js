@@ -1,5 +1,5 @@
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -44,7 +44,7 @@ async function run() {
     app.get("/roommateData/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
-      console.log(id);
+
       const cursor = await roommateCollection.find(query).toArray();
       res.send(cursor);
     });
@@ -104,9 +104,8 @@ async function run() {
 
       const prevLike = parseInt(previousData?.like) || 0;
       const newLike = parseInt(like) || 0;
-      console.log("new", newLike, "prevLIke", prevLike);
+
       const updatedLike = prevLike + newLike;
-      console.log("updated like", updatedLike);
 
       const updateLike = {
         $set: {
@@ -160,7 +159,7 @@ async function run() {
     app.put("/userLiked/:id", async (req, res) => {
       const id = req.params.id;
       const userId = req.body;
-      console.log(userId);
+
       const query = { _id: new ObjectId(id) };
       const userIsLike = {
         $set: {
@@ -178,13 +177,10 @@ async function run() {
       res.send(result);
     });
 
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
   } finally {
-    
   }
 }
 run().catch(console.dir);
