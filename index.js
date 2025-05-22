@@ -27,6 +27,9 @@ async function run() {
     const roommateCollection = client
       .db("data-collection")
       .collection("RoommateCollection");
+    const likeCollection = client
+      .db("data-collection")
+      .collection("likeCollection");
 
     app.get("/roommateData", async (req, res) => {
       const cursor = await roommateCollection.find().limit(6).toArray();
@@ -115,18 +118,6 @@ async function run() {
       res.send(result);
     });
 
-    app.patch("/userLiked/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
-      const userIsLike = {
-        $set: {
-          isLiked: true,
-        },
-      };
-      const result = await roommateCollection.updateOne(query, userIsLike);
-      res.send(result);
-    });
-
     app.put("/update/:id", async (req, res) => {
       const {
         title,
@@ -161,6 +152,29 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = roommateCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // others collection code
+
+    app.put("/userLiked/:id", async (req, res) => {
+      const id = req.params.id;
+      const userId = req.body;
+      console.log(userId);
+      const query = { _id: new ObjectId(id) };
+      const userIsLike = {
+        $set: {
+          userLogId: userId,
+        },
+      };
+      const result = await likeCollection.updateOne(query, userIsLike, {
+        upsert: true,
+      });
+      res.send(result);
+    });
+
+    app.get("/userLogId", async (req, res) => {
+      const result = await likeCollection.find().toArray();
       res.send(result);
     });
 
