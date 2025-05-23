@@ -27,9 +27,9 @@ async function run() {
     const roommateCollection = client
       .db("data-collection")
       .collection("RoommateCollection");
-    const likeCollection = client
+    const userReviewCollection = client
       .db("data-collection")
-      .collection("likeCollection");
+      .collection("user-say");
 
     app.get("/roommateData", async (req, res) => {
       const cursor = await roommateCollection.find().limit(6).toArray();
@@ -147,28 +147,22 @@ async function run() {
       res.send(result);
     });
 
-    app.delete("/deleteList/:id", (req, res) => {
+    app.delete("/deleteList/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
-      const result = roommateCollection.deleteOne(query);
+      const result = await roommateCollection.deleteOne(query);
       res.send(result);
     });
 
     // others collection code
-
-    app.put("/userLiked/:id", async (req, res) => {
-      const id = req.params.id;
-      const userId = req.body;
-
-      const query = { _id: new ObjectId(id) };
-      const userIsLike = {
-        $set: {
-          userLogId: userId,
-        },
+    app.post("/userSay", async (req, res) => {
+      const { title, userName, position } = req.body;
+      const data = {
+        title,
+        userName,
+        position,
       };
-      const result = await likeCollection.updateOne(query, userIsLike, {
-        upsert: true,
-      });
+      const result = await userReviewCollection.insertMany(data);
       res.send(result);
     });
 
