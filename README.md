@@ -48,7 +48,6 @@ This is the backend server for the **Roommate Finder** web application. It provi
 
 ---
 
-## 🛡️ Environment Variables
 
-Create a `.env` file and add the following:
+
 
