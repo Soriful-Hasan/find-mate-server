@@ -28,13 +28,31 @@ async function run() {
       .db("data-collection")
       .collection("RoommateCollection");
 
+    const userQuestionCollection = client
+      .db("data-collection")
+      .collection("Questions");
+
     app.get("/roommateData", async (req, res) => {
-      const cursor = await roommateCollection.find().limit(6).toArray();
+      const query = { availability: "Available" };
+      const cursor = await roommateCollection.find(query).limit(8).toArray();
       res.send(cursor);
     });
 
     app.get("/listingData", async (req, res) => {
-      const cursor = await roommateCollection.find().toArray();
+      const sortAmount = req.query.sort;
+      const search = req.query.search;
+      let query = {};
+      if (search) {
+        query = {
+          title: { $regex: search, $options: "i" },
+        };
+      }
+      const cursor = await roommateCollection.find(query).toArray();
+      if (sortAmount === "asc") {
+        cursor.sort((a, b) => parseInt(a.amount) - parseInt(b.amount));
+      } else if (sortAmount === "desc") {
+        cursor.sort((a, b) => parseInt(b.amount) - parseInt(a.amount));
+      }
       res.send(cursor);
     });
 
@@ -67,6 +85,7 @@ async function run() {
         email,
         contact,
         amount,
+        roomPhoto,
         Location,
         description,
         availability,
@@ -79,6 +98,7 @@ async function run() {
           roomType,
           name,
           email,
+          roomPhoto,
           contact,
           amount,
           Location,
@@ -94,7 +114,8 @@ async function run() {
 
     app.post("/contact", async (req, res) => {
       const data = req.body;
-      console.log(data);
+      const result = await userQuestionCollection.insertOne(data);
+      res.send(result);
     });
 
     app.patch("/addLike/:id", async (req, res) => {
@@ -136,7 +157,6 @@ async function run() {
         $set: {
           title,
           roomType,
-
           contact,
           amount,
           Location,
