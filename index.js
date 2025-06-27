@@ -27,7 +27,6 @@ async function run() {
     const roommateCollection = client
       .db("data-collection")
       .collection("RoommateCollection");
-  
 
     app.get("/roommateData", async (req, res) => {
       const cursor = await roommateCollection.find().limit(6).toArray();
@@ -93,6 +92,11 @@ async function run() {
       res.send(result);
     });
 
+    app.post("/contact", async (req, res) => {
+      const data = req.body;
+      console.log(data);
+    });
+
     app.patch("/addLike/:id", async (req, res) => {
       const id = req.params.id;
       const { like } = req.body;
@@ -152,10 +156,6 @@ async function run() {
       res.send(result);
     });
 
-   
-
-  
-
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
@@ -166,8 +166,7 @@ run().catch(console.dir);
 
 // get for check
 app.get("/", (req, res) => {
-  res.send("hello world") 
-
+  res.send("hello world");
 });
 
 app.listen(port, () => {
